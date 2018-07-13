@@ -159,6 +159,9 @@ type Router struct {
 	// The handler can be used to keep your server from crashing because of
 	// unrecovered panics.
 	PanicHandler func(http.ResponseWriter, *http.Request, interface{})
+
+	//Function to handle pre request
+	EachHandler func(http.ResponseWriter, *http.Request) error
 }
 
 // Make sure the Router conforms with the http.Handler interface
@@ -325,6 +328,12 @@ func (r *Router) allowed(path, reqMethod string) (allow string) {
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if r.PanicHandler != nil {
 		defer r.recv(w, req)
+	}
+
+	if r.EachHandler != nil {
+		if err := r.EachHandler(w, r); err != nil {
+			return
+		}
 	}
 
 	path := req.URL.Path
