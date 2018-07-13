@@ -331,7 +331,7 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if r.EachHandler != nil {
-		if err := r.EachHandler(w, r); err != nil {
+		if err := r.EachHandler(w, req); err != nil {
 			return
 		}
 	}
